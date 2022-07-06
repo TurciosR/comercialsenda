@@ -99,10 +99,12 @@ while(strtotime($fk) <= strtotime($fin))
 {
 
 $fecha_actual = $fk;
+$id_sucursal = $_SESSION['id_sucursal'];
 $sql="SELECT DISTINCT factura.id_empleado, empleado.nombre 
 FROM factura 
 JOIN empleado ON factura.id_empleado = empleado.id_empleado
-WHERE factura.fecha='$fecha_actual'";
+WHERE factura.fecha='$fecha_actual' 
+AND factura.id_sucursal='$id_sucursal'";
 
 $result=_query($sql);
 $cuenta = _num_rows($result);
@@ -118,7 +120,7 @@ if($cuenta > 0)
       // code...
       $nombre=$row["usuario"];
     }
-    $sql_monto = _query("SELECT SUM(total) as total FROM factura WHERE id_empleado = '$id_empleado' AND fecha = '$fecha_actual' AND anulada = 0 AND finalizada = 1 AND caja!=0 AND credito=0");
+    $sql_monto = _query("SELECT SUM(total) as total FROM factura WHERE id_empleado = '$id_empleado' AND fecha = '$fecha_actual' AND anulada = 0 AND finalizada = 1 AND caja!=0 AND credito=0 AND id_sucursal='$id_sucursal'");
     //echo "SELECT SUM(subtotal) as monto FROM factura_detalle WHERE id_empleado = '$id_empleado' AND fecha = '$fecha_actual'";
 
     $row_monto = _fetch_array($sql_monto);
