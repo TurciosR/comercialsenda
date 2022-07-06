@@ -37,7 +37,13 @@ function initial()
   $id_sucursal=$_SESSION['id_sucursal'];
   //permiso del script
   $id_user=$_SESSION["id_usuario"];
-  $sql_apertura = _query("SELECT * FROM apertura_caja WHERE vigente = 1 AND id_sucursal = '$id_sucursal' AND fecha='$fecha_actual' AND id_empleado = '$id_user'");
+  $sql_apertura = _query(
+    "SELECT * FROM apertura_caja
+    WHERE vigente = 1
+    AND id_sucursal = '$id_sucursal'
+    AND fecha='$fecha_actual'
+    AND id_empleado = '$id_user'"
+  );
   $cuenta = _num_rows($sql_apertura);
 
   $turno_vigente=0;
@@ -52,7 +58,9 @@ function initial()
   }
 
   //impuestos
-  $sql_iva="SELECT iva,monto_retencion1,monto_retencion10,monto_percepcion FROM sucursal WHERE id_sucursal='$id_sucursal'";
+  $sql_iva="SELECT iva,monto_retencion1,monto_retencion10,monto_percepcion
+    FROM sucursal
+    WHERE id_sucursal='$id_sucursal'";
   $result_IVA=_query($sql_iva);
   $row_IVA=_fetch_array($result_IVA);
   $iva=$row_IVA['iva']/100;
@@ -76,7 +84,12 @@ function initial()
   if (isset($_REQUEST['id_pedido']))
   {
     $id_pedido = $_REQUEST["id_pedido"];
-    $sql_pedido = _query("SELECT co.*, cl.nombre FROM pedido as co, cliente as cl WHERE co.id_cliente = cl.id_cliente AND co.id_pedido = '$id_pedido'");
+    $sql_pedido = _query(
+      "SELECT co.*, cl.nombre
+      FROM pedido AS co, cliente AS cl
+      WHERE co.id_cliente = cl.id_cliente
+      AND co.id_pedido = '$id_pedido'"
+    );
     $cuenta = _num_rows($sql_pedido);
     if($cuenta != 0)
     {
@@ -189,11 +202,15 @@ a {
                                 <?php
                     if (isset($_REQUEST['id_pedido']))
                     {
-                      echo '<button type="button" id="btn_pedido" name="btn_pedido" class="btn btn-sm btn-primary pull-right usage"><i class="fa fa-check"></i> Pagar</button>';
+                      echo '<button type="button" id="btn_pedido" name="btn_pedido"
+                      class="btn btn-sm btn-primary pull-right usage">
+                      <i class="fa fa-check"></i> Pagar</button>';
                     }
                     else
                     {
-                      echo '<button type="button" id="submit1" name="submit1" class="btn btn-sm btn-primary pull-right usage"><i class="fa fa-check"></i> F2 Pagar</button>';
+                      echo '<button type="button" id="submit1" name="submit1"
+                      class="btn btn-sm btn-primary pull-right usage">
+                      <i class="fa fa-check"></i> F2 Pagar</button>';
                     }
                     ?>
                                 <!-- <button type="button" id="submit1" name="submit1" class="btn btn-sm btn-primary pull-right usage"><i class="fa fa-check"></i> F2 Pagar</button> -->
@@ -202,12 +219,18 @@ a {
                     $filename='agregar_ingreso_caja.php';
                     $link=permission_usr($id_user, $filename);
                     if ($link!='NOT' || $admin=='1') {
-                      echo "<a id='xa' data-toggle='modal' href='agregar_ingreso_caja_v.php'  style='margin-right:1%;'  data-target='#viewModal2' data-refresh='true' class='btn btn-sm btn-warning pull-right'><i class='fa fa-plus icon-large'></i> F9 Ingreso</a>";
+                      echo "<a id='xa' data-toggle='modal' href='agregar_ingreso_caja_v.php'
+                      style='margin-right:1%;'  data-target='#viewModal2' data-refresh='true'
+                      class='btn btn-sm btn-warning pull-right'>
+                      <i class='fa fa-plus icon-large'></i> F9 Ingreso</a>";
                     }
                     $filename='agregar_salida_caja.php';
                     $link=permission_usr($id_user, $filename);
                     if ($link!='NOT' || $admin=='1') {
-                      echo "<a id='xb' data-toggle='modal' href='agregar_salida_caja_v.php' style='margin-right:1%;' data-target='#salidaModal' data-refresh='true' class='btn btn-sm btn-danger pull-right'><i class='fa fa-minus icon-large'></i> F10 Vale</a>";
+                      echo "<a id='xb' data-toggle='modal' href='agregar_salida_caja_v.php'
+                      style='margin-right:1%;' data-target='#salidaModal' data-refresh='true'
+                      class='btn btn-sm btn-danger pull-right'>
+                      <i class='fa fa-minus icon-large'></i> F10 Vale</a>";
                     } ?>
 
                             </div>
@@ -231,7 +254,14 @@ a {
                                     <option value="0">Seleccione</option>
                                     <?php
                     $fecha_actual = date("Y-m-d");
-                    $sql="SELECT cliente.nombre, factura.total,numero_ref FROM factura LEFT JOIN cliente ON cliente.id_cliente=factura.id_cliente WHERE numero_ref!=0 AND fecha='".date("Y-m-d")."' AND finalizada!=1 AND factura.id_sucursal=$id_sucursal";
+                    $sql="SELECT cliente.nombre, factura.total,numero_ref
+                      FROM factura
+                      LEFT JOIN cliente
+                      ON cliente.id_cliente=factura.id_cliente
+                      WHERE numero_ref!=0
+                      AND fecha='".date("Y-m-d")."'
+                      AND finalizada!=1
+                      AND factura.id_sucursal=$id_sucursal";
 
                     $result=_query($sql);
                     $cuenta = _num_rows($result);
@@ -301,9 +331,10 @@ a {
                                         <!--
                     <option value='TIK' selected>COBRO</option>
                   -->
-                                        <option value='TIK'>TICKET</option>
-                                        <option value='COF'>FACTURA</option>
-                                        <option value='CCF'>CREDITO FISCAL</option>
+                                        <option value="TIK">TICKET</option>
+                                        <option value="COF">FACTURA</option>
+                                        <option value="CCF">CREDITO FISCAL</option>
+                                        <option value="NE">NOTA DE ENVÍO</option>
                                     </select>
                                 </div>
                             </div>
@@ -1316,71 +1347,72 @@ function insertar()
 
   //date_default_timezone_set('America/El_Salvador');
   $fecha_movimiento = date("Y-m-d");
-  $id_cliente=$_POST['id_cliente'];
-  $id_factura=$_POST['id_factura'];
-
-  $id_vendedor=$_POST['id_vendedor'];
-  $cuantos = $_POST['cuantos'];
-  $array_json=$_POST['json_arr'];
-  $fecha=date("Y-m-d");
+  $id_cliente = $_POST['id_cliente'];
+  $id_factura = $_POST['id_factura'];
+  $id_vendedor= $_POST['id_vendedor'];
+  $cuantos    = $_POST['cuantos'];
+  $array_json = $_POST['json_arr'];
+  $fecha      = date("Y-m-d");
   //  IMPUESTOS
-  $total_percepcion= $_POST['total_percepcion'];
+  $total_percepcion = $_POST['total_percepcion'];
 
-  $subtotal=$_POST['subtotal'];
-  $sumas=$_POST['sumas'];
-  $suma_gravada=$_POST['suma_gravada'];
-  $iva= $_POST['iva'];
+  $subtotal = $_POST['subtotal'];
+  $sumas    = $_POST['sumas'];
+  $iva      = $_POST['iva'];
   $retencion= $_POST['retencion'];
-  $venta_exenta= $_POST['venta_exenta'];
-  $total_menos_retencion=$_POST['total'];
-  $total = $retencion+$_POST['total'];
+  $total    = $retencion+$_POST['total'];
 
-  $id_empleado=$_SESSION["id_usuario"];
-  if ($id_vendedor == "") {
-    $id_vendedor = $id_empleado;
-  }
-  $id_sucursal=$_SESSION["id_sucursal"];
+  $venta_exenta = $_POST['venta_exenta'];
+  $suma_gravada = $_POST['suma_gravada'];
+  $total_menos_retencion = $_POST['total'];
+  
+  $credito = $_POST['credito'];
+  $turno   = $_POST['turno'];
+  $caja    = $_POST['caja'];
+  $id_empleado  = $_SESSION["id_usuario"];
+  $id_vendedor  = ($id_vendedor == "") ? $id_empleado : $id_vendedor ;
+  $id_sucursal  = $_SESSION["id_sucursal"];
   $fecha_actual = date('Y-m-d');
   $tipoprodserv = "PRODUCTO";
-  $credito=$_POST['credito'];
-  $id_apertura=$_POST['id_apertura'];
-  $turno=$_POST['turno'];
-  $caja=$_POST['caja'];
-  $tipo_documento=$_POST['tipo_impresion'];
-  $tipo_impresion=$tipo_documento;
+  $id_apertura  = $_POST['id_apertura'];
+  
+  
+  
+  $tipo_documento = $_POST['tipo_impresion'];
+  $tipo_impresion = $tipo_documento;
 
-  $insertar_fact=false;
-  $insertar_fact_dett=true;
-  $insertar_numdoc =false;
+  $insertar_fact = false;
+  $insertar_fact_dett = true;
+  $insertar_numdoc    = false;
 
-  $hora=date("H:i:s");
-  $xdatos['typeinfo']='';
+  $hora = date("H:i:s");
   $xdatos['msg']='';
-  $xdatos['process']='';
+  $xdatos['typeinfo'] = '';
+  $xdatos['process']  = '';
 
   _begin();
 
-  $a=1;
-  $b=1;
-  $c=1;
-  $z=1;
-  $j = 1 ;
-  $k = 1 ;
-  $l = 1 ;
+  $a = 1;
+  $b = 1;
+  $c = 1;
+  $z = 1;
+  $j = 1;
+  $k = 1;
+  $l = 1;
   $tipo_entrada_salida='';
 
-  $sql="select * from correlativo WHERE id_sucursal=$id_sucursal";
-  $result= _query($sql);
-  $rows=_fetch_array($result);
-  $nrows=_num_rows($result);
-  $ult_ccf=$rows['ccf']+1;
-  $ult_cof=$rows['cof']+1;
+  $rows=_fetch_array(_query(
+    "SELECT * FROM correlativo WHERE id_sucursal=$id_sucursal"
+  ));
+  $ult_ccf = $rows['ccf']+1;
+  $ult_cof = $rows['cof']+1;
+  $ult_nota_envio = $rows['nota_envio'] +1;
 
   $numero_doc="";
   $num_fact_impresa='';
 
-  $table_numdoc="correlativo";
-  $data_numdoc="";
+  $table_numdoc = "correlativo";
+  $data_numdoc  = "";
 
   if ($tipo_impresion =='COF') {
     $tipo_entrada_salida='FACTURA CONSUMIDOR';
@@ -1389,23 +1421,30 @@ function insertar()
     );
     $numero_doc=numero_tiquete($ult_cof, $tipo_impresion);
   }
-  if ($tipo_impresion =='TIK') {
+  elseif ($tipo_impresion =='TIK') {
     $sql_corre = _query("SELECT * FROM caja WHERE id_caja = '$caja'");
     $row_corre = _fetch_array($sql_corre);
-    $correlativo_dispo = $row_corre["correlativo_dispo"];
-    $tipo_entrada_salida='TICKET';
+    $correlativo_dispo   = $row_corre["correlativo_dispo"];
+    $tipo_entrada_salida = 'TICKET';
     $data_numdoc = array(
       'correlativo_dispo' => $correlativo_dispo+1,
     );
-    $num_fact_impresa=$correlativo_dispo;
-    $numero_doc=numero_tiquete($correlativo_dispo, $tipo_impresion);
+    $num_fact_impresa = $correlativo_dispo;
+    $numero_doc = numero_tiquete($correlativo_dispo, $tipo_impresion);
   }
-  if ($tipo_impresion =='CCF') {
+  elseif($tipo_impresion =='CCF') {
     $tipo_entrada_salida='CREDITO FISCAL';
     $data_numdoc = array(
       'ccf' => $ult_ccf
     );
     $numero_doc=numero_tiquete($ult_ccf, $tipo_impresion);
+  }
+  elseif($tipo_impresion =='NE'){
+    $tipo_entrada_salida='FACTURA CONSUMIDOR';
+    $data_numdoc = array(
+      'nota_envio' => $ult_nota_envio
+    );
+    $numero_doc=numero_tiquete($ult_nota_envio, $tipo_impresion);
   }
 
   if ($tipo_impresion != "TIK") {
@@ -1432,7 +1471,12 @@ function insertar()
     # code...
     $swl =_fetch_array(_query("SELECT * FROM sucursal where id_sucursal=$id_sucursal "));
     $serie=$swl['serie_cof'];
-    $sql_ult=_query("SELECT MAX(CONVERT(num_fact_impresa,UNSIGNED INTEGER)) as ultimo FROM factura WHERE id_sucursal=$id_sucursal AND tipo_documento='COF' ");
+    $sql_ult=_query(
+      "SELECT MAX(CONVERT(num_fact_impresa,UNSIGNED INTEGER))as ultimo
+      FROM factura
+      WHERE id_sucursal=$id_sucursal
+      AND tipo_documento='COF'"
+    );
 
     $num_rows_ul=_num_rows($sql_ult);
     if ($num_rows_ul>0) {
@@ -1440,12 +1484,25 @@ function insertar()
       $ul=_fetch_array($sql_ult);
       $ultimo=$ul['ultimo'];
     }
+  } elseif ($tipo_impresion == 'NE'){
+    $serie="";
+    $sql_ult=_query(
+      "SELECT MAX(CONVERT(num_fact_impresa,UNSIGNED INTEGER)) as ultimo
+      FROM factura
+      WHERE id_sucursal=$id_sucursal
+      AND tipo_documento='NE'"
+    );
   } else {
     # code...
     $swl =_fetch_array(_query("SELECT * FROM sucursal where id_sucursal=$id_sucursal "));
     $serie=$swl['serie_ccf'];
 
-    $sql_ult=_query("SELECT MAX(CONVERT(num_fact_impresa,UNSIGNED INTEGER)) as ultimo FROM factura WHERE id_sucursal=$id_sucursal AND tipo_documento='CCF' ");
+    $sql_ult=_query(
+      "SELECT MAX(CONVERT(num_fact_impresa,UNSIGNED INTEGER)) as ultimo
+      FROM factura
+      WHERE id_sucursal=$id_sucursal
+      AND tipo_documento='CCF'"
+    );
 
     $num_rows_ul=_num_rows($sql_ult);
     if ($num_rows_ul>0) {
@@ -1460,7 +1517,7 @@ function insertar()
   }
   $id_fact="";
   if ($id_factura=="") {
-    # code...
+    # Si $id_factura es vacio, vamo' a insertar un nuevo registro de factura.
     $table_fact= 'factura';
     $form_data_fact = array(
       'id_cliente' => $id_cliente,
@@ -1515,7 +1572,8 @@ function insertar()
       $b=0;
     }
   } else {
-    # code...
+    #Sino, Actualizamos los datos de la factura con los datos recolectados.
+    #(Normalmente esto se hace para insertar el numero de factura impreso.)
     $table_fact= 'factura';
     $form_data_fact = array(
       'id_cliente' => $id_cliente,
@@ -1631,35 +1689,37 @@ function insertar()
   if ($cuantos>0) {
     $array = json_decode($array_json, true);
     foreach ($array as $fila) {
-      $id_producto=$fila['id'];
-      $unidades=$fila['unidades'];
-      $subtotal=$fila['subtotal'];
-      $cantidad=$fila['cantidad'];
-      $id_presentacion=$fila['id_presentacion'];
-      $cantidad_real=$cantidad*$unidades;
-      $exento=$fila['exento'];
-      $precio_venta=$fila['precio'];
+      $id_producto = $fila['id'];
+      $unidades    = $fila['unidades'];
+      $subtotal    = $fila['subtotal'];
+      $cantidad    = $fila['cantidad'];
+      $exento      = $fila['exento'];
+      $id_presentacion = $fila['id_presentacion'];
+      $cantidad_real   = $cantidad*$unidades;
+      $precio_venta    = $fila['precio'];
 
-      $sql_costo=_fetch_array(_query("SELECT costo FROM presentacion_producto WHERE id_pp  = $id_presentacion"));
-      $precio_compra=$sql_costo['costo'];
-      $table_fact_det= 'factura_detalle';
-      $data_fact_det = array(
-        'id_factura' => $id_fact,
+      $sql_costo=_fetch_array(_query(
+        "SELECT costo FROM presentacion_producto WHERE id_pp  = $id_presentacion"
+      ));
+      $precio_compra  = $sql_costo['costo'];
+      $table_fact_det = 'factura_detalle';
+      $data_fact_det  = array(
+        'id_factura'   => $id_fact,
         'id_prod_serv' => $id_producto,
-        'cantidad' => $cantidad_real,
+        'cantidad'     => $cantidad_real,
         'precio_venta' => $precio_venta,
-        'subtotal' => $subtotal,
+        'subtotal'     => $subtotal,
         'tipo_prod_serv' => $tipoprodserv,
-        'id_empleado' => $id_empleado,
-        'id_sucursal' => $id_sucursal,
+        'id_empleado'  => $id_empleado,
+        'id_sucursal'  => $id_sucursal,
         'fecha' => $fecha_movimiento,
         'id_presentacion'=> $id_presentacion,
-        'exento' => $exento,
+        'exento'    => $exento,
         'id_server' => '0',
         'id_server_prod' => '0',
         'descuento' => '0',
         'id_factura_dia' => '0',
-        'impresa_lote' => '0',
+        'impresa_lote'   => '0',
         'hora' => date("H:i:s"),
         'id_server_presen' => '0',
 
@@ -1674,10 +1734,21 @@ function insertar()
       $cantidad=$cantidad*$unidades;
       $a_transferir=$cantidad;
 
-      $orig=_fetch_array(_query("SELECT ubicacion.id_ubicacion FROM ubicacion WHERE ubicacion.bodega=0 AND ubicacion.id_sucursal=$id_sucursal"));
+      $orig=_fetch_array(_query(
+        "SELECT ubicacion.id_ubicacion
+        FROM ubicacion
+        WHERE ubicacion.bodega=0
+        AND ubicacion.id_sucursal=$id_sucursal"
+      ));
       $origen=$orig['id_ubicacion'];
 
-      $sql=_query("SELECT * FROM stock_ubicacion WHERE stock_ubicacion.id_producto=$id_producto AND stock_ubicacion.id_ubicacion=$origen AND stock_ubicacion.cantidad!=0 ORDER BY id_posicion DESC ,id_estante DESC ");
+      $sql=_query(
+        "SELECT * FROM stock_ubicacion
+        WHERE stock_ubicacion.id_producto=$id_producto
+        AND stock_ubicacion.id_ubicacion=$origen
+        AND stock_ubicacion.cantidad!=0
+        ORDER BY id_posicion DESC ,id_estante DESC"
+      );
 
       while ($rowsu=_fetch_array($sql)) {
         # code...
@@ -1722,20 +1793,20 @@ function insertar()
           }
           $table="movimiento_stock_ubicacion";
           $form_data = array(
-            'id_producto' => $id_producto,
-            'id_origen' => $id_su1,
-            'id_destino'=> 0,
-            'cantidad' => $transfiriendo,
-            'fecha' => $fecha,
-            'hora' => $hora,
+            'fecha'   => $fecha,
+            'hora'    => $hora,
             'anulada' => 0,
-            'afecta' => 0,
+            'afecta'  => 0,
+            'id_producto' => $id_producto,
+            'id_origen'   => $id_su1,
+            'id_destino'  => 0,
+            'cantidad'    => $transfiriendo,
+            'id_server'   => '0',
             'id_sucursal' => $id_sucursal,
-            'id_presentacion'=> $id_presentacion,
-            'id_mov_prod' => $id_movimiento,
-            'id_server' => '0',
-            'id_server_prod' => '0',
+            'id_mov_prod' => $id_movimiento,           
+            'id_server_prod'   => '0',
             'id_server_presen' => '0',
+            'id_presentacion'  => $id_presentacion,
 
           );
 
@@ -1770,16 +1841,17 @@ function insertar()
           $cant_total=$existencias-($cantidad-$a_transferir);
           $form_data1 = array(
             'id_movimiento'=>$id_movimiento,
-            'id_producto' => $id_producto,
+            'id_producto'  => $id_producto,
             'cantidad' => ($cantidad-$a_transferir),
-            'costo' => $precio_compra,
-            'precio' => $precio_venta,
-            'stock_anterior'=>$existencias,
-            'stock_actual'=>$cant_total,
-            'lote' => 0,
+            'costo'    => $precio_compra,
+            'precio'   => $precio_venta,
+            'lote'     => 0,
+            'fecha'    => $fecha,
+            'hora'     => $hora,
+            'stock_anterior'  =>$existencias,
+            'stock_actual'    =>$cant_total,
             'id_presentacion' => $id_presentacion,
-            'fecha' =>  $fecha,
-            'hora' => $hora,
+            
             'id_server' => '0',
           );
           $insert_mov_det = _insert($table1, $form_data1);
@@ -1793,23 +1865,23 @@ function insertar()
             $form_data2 = array(
               'id_producto' => $id_producto,
               'stock' => 0,
-              'costo_unitario'=>round(($precio_compra/$unidades), 2),
+              'costo_unitario' =>round(($precio_compra/$unidades), 2),
               'precio_unitario'=>round(($precio_venta/$unidades), 2),
-              'create_date'=>$fecha_movimiento,
-              'update_date'=>$fecha_movimiento,
+              'create_date' =>$fecha_movimiento,
+              'update_date' =>$fecha_movimiento,
               'id_sucursal' => $id_sucursal,
-              'id_server' => '0',
+              'id_server'   => '0',
             );
             $insert_stock = _insert($table2, $form_data2);
           } else {
             $form_data2 = array(
               'id_producto' => $id_producto,
               'stock' => $cant_total,
-              'costo_unitario'=>round(($precio_compra/$unidades), 2),
-              'precio_unitario'=>round(($precio_venta/$unidades), 2),
-              'update_date'=>$fecha_movimiento,
+              'costo_unitario' => round(($precio_compra/$unidades), 2),
+              'precio_unitario'=> round(($precio_venta/$unidades), 2),
+              'update_date' => $fecha_movimiento,
               'id_sucursal' => $id_sucursal,
-              'id_server' => '0',
+              'id_server'   => '0',
             );
             $where_clause="WHERE id_producto='$id_producto' and id_sucursal='$id_sucursal'";
             $insert_stock = _update($table2, $form_data2, $where_clause);
@@ -1892,16 +1964,16 @@ function insertar()
           $table1= 'movimiento_producto_pendiente';
           $cant_total=$existencias-$cantidad;
           $form_data1 = array(
-            'id_movimiento'=>$id_movimiento,
-            'id_producto' => $id_producto,
+            'id_movimiento'   => $id_movimiento,
+            'id_producto'     => $id_producto,
             'id_presentacion' => $id_presentacion,
             'cantidad' => $a_transferir,
-            'costo' => $precio_compra,
-            'precio' => $precio_venta,
-            'fecha' =>  $fecha,
-            'hora' => $hora,
+            'costo'    => $precio_compra,
+            'precio'   => $precio_venta,
+            'fecha'    =>  $fecha,
+            'hora'     => $hora,
             'id_sucursal' => $id_sucursal,
-            'id_server' => '0',
+            'id_server'   => '0',
           );
           $insert_mov_det = _insert($table1, $form_data1);
           if (!$insert_mov_det) {
@@ -1913,45 +1985,44 @@ function insertar()
           $table1= 'movimiento_producto_pendiente';
           $cant_total=$existencias-$cantidad;
           $form_data1 = array(
-            'id_movimiento'=>$id_movimiento,
-            'id_producto' => $id_producto,
+            'id_movimiento'   => $id_movimiento,
+            'id_producto'     => $id_producto,
             'id_presentacion' => $id_presentacion,
             'cantidad' => $cantidad,
-            'costo' => $precio_compra,
-            'precio' => $precio_venta,
-            'fecha' =>  $fecha,
-            'hora' => $hora,
+            'costo'    => $precio_compra,
+            'precio'   => $precio_venta,
+            'fecha'    =>  $fecha,
+            'hora'     => $hora,
             'id_sucursal' => $id_sucursal,
-            'id_server' => '0',
+            'id_server'   => '0',
           );
           $insert_mov_det = _insert($table1, $form_data1);
           if (!$insert_mov_det) {
             $j = 0;
           }
         }
-      }
 
-      /*Hay suficientes unidades en  el stock_ubicacion para realizar el descargo y se procede normalmente*/
-      else {
+      }else {
+        /*Hay suficientes unidades en  el stock_ubicacion para realizar el descargo y se procede normalmente*/
         $table1= 'movimiento_producto_detalle';
         $cant_total=$existencias-$cantidad;
         $form_data1 = array(
           'id_movimiento'=>$id_movimiento,
-          'id_producto' => $id_producto,
+          'id_producto'  => $id_producto,
           'cantidad' => $cantidad,
-          'costo' => $precio_compra,
-          'precio' => $precio_venta,
+          'costo'    => $precio_compra,
+          'precio'   => $precio_venta,
           'stock_anterior'=>$existencias,
-          'stock_actual'=>$cant_total,
+          'stock_actual'  =>$cant_total,
           'lote' => 0,
           'id_presentacion' => $id_presentacion,
-          'fecha' =>  $fecha,
-          'hora' => $hora,
-          'id_server' => '0',
+          'fecha' => $fecha,
+          'hora'  => $hora,
+          'id_server'   => '0',
           'id_sucursal' => $id_sucursal,
-          'id_server_prod' => '0',
+          'id_server_prod'   => '0',
           'id_server_presen' => '0',
-          'proceso' => '0',
+          'proceso'    => '0',
           'referencia' => '',
 
         );
@@ -1967,12 +2038,12 @@ function insertar()
           $form_data2 = array(
             'id_producto' => $id_producto,
             'stock' => $cant_total,
-            'costo_unitario'=>round(($precio_compra/$unidades), 2),
-            'precio_unitario'=>round(($precio_venta/$unidades), 2),
-            'create_date'=>$fecha_movimiento,
-            'update_date'=>$fecha_movimiento,
+            'costo_unitario' => round(($precio_compra/$unidades), 2),
+            'precio_unitario'=> round(($precio_venta/$unidades), 2),
+            'create_date' => $fecha_movimiento,
+            'update_date' => $fecha_movimiento,
             'id_sucursal' => $id_sucursal,
-            'id_server' => '0',
+            'id_server'   => '0',
           );
           $insert_stock = _insert($table2, $form_data2);
         } else {
@@ -1980,11 +2051,11 @@ function insertar()
           $form_data2 = array(
             'id_producto' => $id_producto,
             'stock' => $cant_total,
-            'costo_unitario'=>round(($precio_compra/$unidades), 2),
-            'precio_unitario'=>round(($precio_venta/$unidades), 2),
-            'update_date'=>$fecha_movimiento,
+            'costo_unitario'  => round(($precio_compra/$unidades), 2),
+            'precio_unitario' => round(($precio_venta/$unidades), 2),
+            'update_date' => $fecha_movimiento,
             'id_sucursal' => $id_sucursal,
-            'id_server' => '0'
+            'id_server'   => '0'
           );
           $where_clause="WHERE id_producto='$id_producto' and id_sucursal='$id_sucursal'";
           $insert_stock = _update($table2, $form_data2, $where_clause);
@@ -1995,13 +2066,15 @@ function insertar()
 
         /*arreglando problema con lotes de nuevo*/
         $cantidad_a_descontar=$cantidad;
-        $sql=_query("SELECT id_lote, id_producto, fecha_entrada, vencimiento, cantidad
-        FROM lote
-        WHERE id_producto='$id_producto'
-        AND id_sucursal='$id_sucursal'
-        AND cantidad>0
-        AND estado='VIGENTE'
-        ORDER BY vencimiento");
+        $sql=_query(
+          "SELECT id_lote, id_producto, fecha_entrada, vencimiento, cantidad
+          FROM lote
+          WHERE id_producto='$id_producto'
+          AND id_sucursal='$id_sucursal'
+          AND cantidad>0
+          AND estado='VIGENTE'
+          ORDER BY vencimiento"
+        );
 
         $contar=_num_rows($sql);
         $insert=1;
@@ -2092,13 +2165,13 @@ function insertar()
 
 function imprimir_fact()
 {
-  $numero_doc = $_POST['numero_doc'];
-  $tipo_impresion= $_POST['tipo_impresion'];
-  $id_factura= $_POST['num_doc_fact'];
-  $id_sucursal=$_SESSION['id_sucursal'];
+  $numero_doc     = $_POST['numero_doc'];
+  $tipo_impresion = $_POST['tipo_impresion'];
+  $id_factura  = $_POST['num_doc_fact'];
+  $id_sucursal =$_SESSION['id_sucursal'];
   $numero_factura_consumidor = $_POST['numero_factura_consumidor'];
-  $direccion=$_POST['direccion'];
-  $fecha_fact=MD($_POST['fecha_fact']);
+  $direccion  = $_POST['direccion'];
+  $fecha_fact = MD($_POST['fecha_fact']);
 
   $nombreape= $_POST['nombreape'];
   if ($tipo_impresion=='COF') {

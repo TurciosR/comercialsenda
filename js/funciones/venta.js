@@ -1328,7 +1328,8 @@ function senddata() {
             success: function(datax) {
                 if (datax.typeinfo == "Success") {
                     $(".usage").attr("disabled", true);
-                    if (tipo_impresion == "CCF" || tipo_impresion == "COF") {
+                    if (tipo_impresion == "CCF" || tipo_impresion == "COF" ||
+                        tipo_impresion == "NE") {
                         if (tipo_impresion == "CCF") {
                             $("#nitcli").attr('readOnly', false);
                             $("#nrccli").attr('readOnly', false);

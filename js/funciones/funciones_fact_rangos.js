@@ -204,7 +204,7 @@ function print1() {
 					});
 				}
 			}
-			if (tipo_impresion == 'ENV') {
+			if (tipo_impresion == 'NE') {
 				if (sist_ope == 'win') {
 					$.post("http://"+dir_print+"printenvwin1.php", {
 						datosventa: datos.facturar,

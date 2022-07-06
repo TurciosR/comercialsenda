@@ -152,6 +152,7 @@ function cambio(tipo)
             var fila = "<tr><td>TIQUETE</td><td>"+tike_min+"</td><td>"+tike_max+"</td><td>"+t_tike+"</td><td>"+total_tike+"</td></tr>";
             fila += "<tr><td>FACTURA</td><td>"+factura_min+"</td><td>"+factura_max+"</td><td>"+t_factuta+"</td><td>"+total_factura+"</td></tr>";
             fila += "<tr><td>CREDITO FISCAL</td><td>"+credito_fiscal_min+"</td><td>"+credito_fiscal_max+"</td><td>"+t_credito+"</td><td>"+total_credito_fiscal+"</td></tr><tr>";
+			fila += "<tr><td>NOTAS DE ENVíO</td><td>"+datax.nota_envio_min+"</td><td>"+datax.nota_envio_max+"</td><td>"+datax.t_notas_envio_counter+"</td><td>"+datax.total_nota_envio+"</td></tr>";
             fila += "<td colspan='4'>MONTO APERTURA</td><td><label id='id_total1'>"+monto_apertura+"</label></td></tr>";
             fila += "<td colspan='4'>MONTO CAJA CHICA</td><td><label id='id_total12'>"+monto_ch+"</label></td></tr>";
             fila += "<td colspan='4'>(-RETENCION)</td><td><label id='id_totalre'>"+monto_retencion+"</label></td></tr>";
@@ -265,8 +266,10 @@ function senddata(){
 		var urlprocess='corte_caja_diario.php';
 	}
 
-	var dataString='process='+process+'&fecha='+fecha+'&efectivo='+efectivo+'&tarjeta='+tarjeta+'&cheque='+cheque;
-	dataString+='&total_corte='+total_corte+'&total_sistema='+total_sistema+'&diferencia='+diferencia+'&numero_remesa='+numero_remesa+'&observaciones='+observaciones;
+	var dataString='process='+process+'&fecha='+fecha+'&efectivo='+efectivo
+		+'&tarjeta='+tarjeta+'&cheque='+cheque;
+	dataString += '&total_corte='+total_corte+'&total_sistema='+total_sistema
+		+'&diferencia='+diferencia+'&numero_remesa='+numero_remesa+'&observaciones='+observaciones;
 
 
 	$.ajax({
@@ -279,7 +282,7 @@ function senddata(){
         		display_notify(datax.typeinfo,datax.msg);
 				if(datax.typeinfo == "Success")
 				{
-					imprimir_corte(id_corte)
+					imprimir_corte(id_corte);
 
 					setInterval("reload1();", 1000);
 				}

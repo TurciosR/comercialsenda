@@ -1,4 +1,17 @@
 <?php
+/**
+ * This file is part of the OpenPyme1.
+ * 
+ * (c) Open Solution Systems <operaciones@tumundolaboral.com.sv>
+ * 
+ * For the full copyright and license information, please refere to LICENSE file
+ * that has been distributed with this source code.
+ */
+
+//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+//ini_set('display_errors', 1);
+//error_reporting( E_ALL );
+
 include_once "_core.php";
 
 function initial()
@@ -428,6 +441,10 @@ function initial()
           for ($i=0;$i<$cuantos ;$i++)
           {
             list($id_producto,$precio_compra,$precio_venta,$cantidad,$unidades,$fecha_caduca,$id_presentacion,$exento)=explode('|',$lista[$i]);
+            //Validar que si es CCF le sume nuevamente el IVA
+            if($alias_tipodoc == 'CCF'){
+              $precio_compra = round(($precio_compra * 1.13), 4);
+            }
             $sql_su="SELECT id_su, cantidad FROM stock_ubicacion WHERE id_producto='$id_producto' AND id_sucursal='$id_sucursal' AND id_ubicacion='$destino' AND id_estante=0 AND id_posicion=0";
             $stock_su=_query($sql_su);
             $nrow_su=_num_rows($stock_su);

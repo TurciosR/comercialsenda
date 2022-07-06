@@ -84,7 +84,7 @@ span.select2-container {
                       <th class="col-lg-1">Fecha</th>
                       <th class="col-lg-3">Cliente</th>
                       <th class="col-lg-1">Tipo Doc.</th>
-                      <th class="col-lg-1">Num. Doc.</th>
+                      <th class="col-lg-1">N° Factura Impresa</th>
                       <th class="col-lg-1">Total</th>
                       <th class="col-lg-1">Abonado</th>
                       <th class="col-lg-1">Saldo</th>

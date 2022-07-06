@@ -20,6 +20,7 @@ function generar() {
     ],
     "processing": true,
     "serverSide": true,
+    "searchable": true,
     "ajax": {
       url: "admin_credito_dt.php?fechai=" + fechai + "&fechaf=" + fechaf, // json datasource
       //url :"admin_factura_rangos_dt.php", // json datasource

@@ -1843,7 +1843,8 @@ function print_corte($id_corte){
 		c.cashinicial, c.vtacontado, c.vtaefectivo, c.vtatcredito, c.totalgral, c.subtotal, c.cashfinal, c.diferencia,
 		c.totalnodev, c.totalnoanu, c.depositos, c.vales, c.tarjetas, c.depositon, c.valen, c.tarjetan, c.ingresos,
 		c.tcredito, c.ncortex, c.ncortez, c.ncortezm, c.cerrado, c.id_empleado, c.id_sucursal, c.id_apertura,
-		c.fecha_corte, c.hora_corte, c.tipo_corte,e.nombre, c.monto_ch, c.tiket, c.turno, c.retencion
+		c.fecha_corte, c.hora_corte, c.tipo_corte,e.nombre, c.monto_ch, c.tiket, c.turno, c.retencion,
+		c.total_notasenvio, c.notasenvio_inicio, c.notasenvio_final
 		FROM controlcaja AS c
 		JOIN usuario AS e ON(e.id_usuario=c.id_empleado)
 		WHERE c.id_corte='$id_corte'";
@@ -1856,7 +1857,8 @@ function print_corte($id_corte){
 		c.cashinicial, c.vtacontado, c.vtaefectivo, c.vtatcredito, c.totalgral, c.subtotal, c.cashfinal, c.diferencia,
 		c.totalnodev, c.totalnoanu, c.depositos, c.vales, c.tarjetas, c.depositon, c.valen, c.tarjetan, c.ingresos,
 		c.tcredito, c.ncortex, c.ncortez, c.ncortezm, c.cerrado, c.id_empleado, c.id_sucursal, c.id_apertura,
-		c.fecha_corte, c.hora_corte, c.tipo_corte,em.nombre, c.monto_ch, c.tiket, c.turno, c.retencion
+		c.fecha_corte, c.hora_corte, c.tipo_corte,em.nombre, c.monto_ch, c.tiket, c.turno, c.retencion,
+		c.total_notasenvio, c.notasenvio_inicio, c.notasenvio_final
 		FROM controlcaja AS c
 		JOIN usuario AS e ON(e.id_usuario=c.id_empleado)
 		LEFT JOIN empleado as em on(e.id_empleado=em.id_empleado)
@@ -1881,6 +1883,9 @@ function print_corte($id_corte){
 	$ffinal= $row["ffinal"];
 	$cfinicio= $row["cfinicio"];
 	$cffinal= $row["cffinal"];
+	$notasenvio_inicio = $row['notasenvio_inicio'];
+	$notasenvio_final  = $row['notasenvio_final'];
+	$total_notas_envio = (($tipo == 'C') ? $row['total_notasenvio'] : 0.00);
 	$cashini= $row["cashinicial"];
 	$vtaefectivo= $row["vtaefectivo"];
 	$ingresos= $row["ingresos"];
@@ -1915,7 +1920,7 @@ function print_corte($id_corte){
 	$cfexento= sprintf('%.2f', $row["cfexento"]);
 	$cfgravado=sprintf('%.2f',  $row["cfgravado"]);
 	$totalcf=sprintf('%.2f',  $row["totalcf"]);
-	$vtatotales=$totalt+$totalf+$totalcf;
+	$vtatotales=$totalt+$totalf+$totalcf+$total_notas_envio;
 	$vtatotales_print=sprintf('%.2f', $vtatotales);
 	$vtaefectivo= sprintf('%.2f', $vtaefectivo);
 	$cashini= sprintf('%.2f', $cashini);
@@ -1972,6 +1977,7 @@ function print_corte($id_corte){
 		$info_factura.=$esp_init0."TIQUETES:     ".$tinicio."   ".$tfinal."\n";
 		$info_factura.=$esp_init0."FACTURAS:     ".str_pad($finicio,7," ",STR_PAD_LEFT)."   ".str_pad($ffinal,7," ",STR_PAD_LEFT)."\n";
 		$info_factura.=$esp_init0."FISCALES:     ".str_pad($cfinicio,7," ",STR_PAD_LEFT)."   ".str_pad($cffinal,7," ",STR_PAD_LEFT)."\n";
+		$info_factura.=$esp_init0."NOTAS ENVIO:  ".str_pad($notasenvio_inicio,7," ",STR_PAD_LEFT)."   ".str_pad($notasenvio_final,7," ",STR_PAD_LEFT)."\n";
 		$info_factura.="\n";
 
 		$n=5;

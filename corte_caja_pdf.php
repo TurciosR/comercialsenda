@@ -11,7 +11,7 @@ $pdf->SetTopMargin(2);
 $pdf->SetLeftMargin(10);
 $pdf->AliasNbPages();
 $pdf->SetAutoPageBreak(true,1);
-$pdf->AddFont("latin","","latin.php");
+$pdf->AddFont("Arial","","latin.php");
 
 $id_corte = $_REQUEST["id_corte"];
 $sql_corte = _query("SELECT cc.*, u.nombre AS nombre_empleado, c.nombre AS nombre_caja
@@ -37,12 +37,14 @@ if($cuenta > 0)
   $sobrante = $row["sobrante"];
   $nombre_empleado = $row["nombre_empleado"];
   $nombre_caja = $row["nombre_caja"];
+  $tipo_corte  = $row['tipo_corte'];
 
   $totalt = $row["totalt"];
   $totalf = $row["totalf"];
   $totalcf = $row["totalcf"];
+  $total_notas_envio = (($tipo_corte == 'C') ? $row['total_notasenvio'] : 0.00);
 
-  $total_doc = number_format($totalt+$totalf+$totalcf, 2,'.','');
+  $total_doc = number_format($totalt+$totalf+$totalcf+$total_notas_envio, 2,'.','');
 
   $total_cm = $total_cobro + $total_mora;
   $total_mcaja = $ingresos - $vales;
@@ -85,7 +87,7 @@ class PDF extends FPDF
     // Cabecera de página\
     public function Header()
     {
-      $this->SetFont('Latin','',12);
+      $this->SetFont('Arial','',12);
 
       $this->Cell(100,6,utf8_decode($this->a),0,0,'L');
       $this->MultiCell(100,6,$this->d,0,'R',0);
@@ -111,14 +113,6 @@ class PDF extends FPDF
       $this->d=$d;
     }
 }
-$sql_ncob = _query("SELECT * FROM prestamo_detalle WHERE fecha_pago='$fecha_corte' AND apertura='$id_apertura' AND refinanciado=0 GROUP BY referencia");
-//$dats_ncob = _fetch_array($sql_ncob);
-$ncobros = _num_rows($sql_ncob);//$dats_ncob["ncobros"];
-
-$sql_ndesem = _query("SELECT count(id_prestamo) AS ndesembolso, SUM(monto) as monto FROM prestamo WHERE fecha_desembolso='$fecha_corte'");
-$dats_ndesem = _fetch_array($sql_ndesem);
-$ndesembolsos = $dats_ndesem["ndesembolso"];
-$total_desembolso = $dats_ndesem["monto"];
 
 $sql_ref = _query("SELECT count(id_movimiento) AS nmov, SUM(valor) as monto FROM mov_caja WHERE fecha='$fecha_corte' AND turno='$turno' AND id_apertura='$id_apertura' AND concepto LIKE '%CANCELACION DE PRESTAMO POR REFINANCIAMIENTO%'");
 $dats_ref = _fetch_array($sql_ref);
@@ -132,16 +126,15 @@ $pdf->SetTopMargin(8);
 $pdf->SetLeftMargin(8);
 $pdf->AliasNbPages();
 $pdf->SetAutoPageBreak(true,20);
-$pdf->AddFont("latin","","latin.php");
 $pdf->AddPage();
 
 //$pdf->AddPage();
-$pdf->SetFont('latin','',10);
+$pdf->SetFont('Arial','',10);
 //$pdf->Image($logo,8,4,30,25);
 
 
 
-$pdf->SetFont('latin','',10);
+$pdf->SetFont('Arial','',10);
 $pdf->Cell(20,5,"",0,1,'C',0);
 //$pdf->SetXY($set_x, $set_y);
 $pdf->Cell(20,5,utf8_decode("TURNO N° ".$turno),0,1,'L',0);
@@ -165,6 +158,12 @@ $pdf->Cell(50,5,number_format($totalf, 2, '.', ','),0,1,'R',0);
 $pdf->Line($set_x,$set_y,$set_x+200,$set_y);
 $pdf->Cell(150,5,utf8_decode("CREDITO FISCAL"),0,0,'L',0);
 $pdf->Cell(50,5,number_format($totalcf, 2, '.', ','),0,1,'R',0);
+
+if($tipo_corte == 'C'){
+  $pdf->Line($set_x,$set_y,$set_x+200,$set_y);
+  $pdf->Cell(150,5,utf8_decode("NOTAS DE ENVIO"),0,0,'L',0);
+  $pdf->Cell(50,5,number_format($total_notas_envio, 2, '.', ','),0,1,'R',0);
+}
 
 $set_x = $pdf->GetX();
 $set_y = $pdf->GetY();
@@ -248,77 +247,6 @@ $pdf->Cell(150,5,utf8_decode("TOTAL"),0,0,'L',0);
 $pdf->Cell(50,5,number_format($total_mcaja, 2, '.', ','),0,1,'R',0);
 
 
-////////////////////////Cobros externos
-
-$sql_vendedores = _query("SELECT p.id_cobrador, u.nombre FROM prestamo_detalle as p JOIN usuario as u ON p.id_cobrador=u.id_usuario WHERE p.fecha_pago BETWEEN '$fecha_corte' AND '$fecha_corte' AND pagado='1' AND p.apertura = 0 AND p.cajero = 0 AND p.turno = 0 GROUP BY id_cobrador");
-$cuenta = _num_rows($sql_vendedores);
-
-if($cuenta > 0)
-{
-  $pdf->Cell(20,5,"",0,1,'C',0);
-  //$pdf->SetXY($set_x, $set_y);
-  $pdf->Cell(200,5,utf8_decode("COBROS EXTERNOS"),0,1,'C',0);
-  $set_x = $pdf->GetX();
-  $set_y = $pdf->GetY();
-  //$pdf->Line($set_x,$set_y,$set_x+200,$set_y);
-  $pdf->Cell(100,5,utf8_decode("COBRADOR"),0,0,'L',0);
-  $pdf->Cell(25,5,utf8_decode("N° COBROS"),0,0,'C',0);
-  $pdf->Cell(25,5,utf8_decode("MONTO"),0,0,'R',0);
-  $pdf->Cell(25,5,utf8_decode("MORA"),0,0,'R',0);
-  $pdf->Cell(25,5,utf8_decode("TOTAL"),0,1,'R',0);
-
-  $total_general =0;
-  $total_generalf =0;
-  $total_general_plus =0;
-  while ($row = _fetch_array($sql_vendedores))
-  {
-    $id_cobrador = $row["id_cobrador"];
-    $nombre = Mayu(utf8_decode($row["nombre"]));
-    $set_x = $pdf->GetX();
-    $set_y = $pdf->GetY();
-    //$pdf->Line($set_x,$set_y,$set_x+200,$set_y);
-    $pdf->Line($set_x,$set_y-5,$set_x+200,$set_y-5);
-    $sql_aux = _query("SELECT COUNT(*) AS n_cobros, SUM(pd.monto) AS total, SUM(pd.mora) AS total_mora FROM prestamo_detalle as pd
-    JOIN prestamo AS p ON pd.id_prestamo=p.id_prestamo JOIN cliente as c ON c.id_cliente = p.id_cliente
-    WHERE pd.id_cobrador = '$id_cobrador' AND pd.pagado=1 AND pd.fecha_pago BETWEEN '$fecha_corte' AND '$fecha_corte' AND pd.apertura = 0 AND pd.cajero = 0 AND pd.turno = 0
-    GROUP BY pd.id_cobrador ORDER BY c.nombre ASC");
-    $cuenta_aux = _num_rows($sql_aux);
-    if($cuenta_aux)
-    {
-      $set_x = $pdf->GetX();
-      $set_y = $pdf->GetY();
-      $pdf->Line($set_x,$set_y,$set_x+200,$set_y);
-      $i = 1;
-      $tot = 0;
-      $totf = 0;
-      $row_aux = _fetch_array($sql_aux);
-      $mora = $row_aux["total_mora"];
-      $monto = $row_aux["total"];
-      $n_cobros = $row_aux["n_cobros"];
-
-      $total_plus = $monto + $mora;
-
-
-      $pdf->Cell(100,5,utf8_decode($nombre),0,0,'L',0);
-      $pdf->Cell(25,5,utf8_decode($n_cobros),0,0,'C',0);
-      $pdf->Cell(25,5,utf8_decode(number_format($monto, 2, '.',',')),0,0,'R',0);
-      $pdf->Cell(25,5,utf8_decode(number_format($mora, 2, '.',',')),0,0,'R',0);
-      $pdf->Cell(25,5,utf8_decode(number_format($total_plus, 2, '.',',')),0,1,'R',0);
-
-      $total_general += $monto;
-      $total_generalf += $mora;
-      $total_general_plus += $total_plus;
-
-    }
-  }
-  $set_x = $pdf->GetX();
-  $set_y = $pdf->GetY();
-  $pdf->Line($set_x,$set_y,$set_x+200,$set_y);
-  $pdf->Cell(125,5,utf8_decode("TOTAL"),0,0,'L',0);
-  $pdf->Cell(25,5,utf8_decode(number_format($total_general, 2, '.',',')),0,0,'R',0);
-  $pdf->Cell(25,5,utf8_decode(number_format($total_generalf, 2, '.',',')),0,0,'R',0);
-  $pdf->Cell(25,5,utf8_decode(number_format($total_general_plus, 2, '.',',')),0,1,'R',0);
-}
 
 //////////////Devoluciones
 $devolucion = 0;
@@ -423,5 +351,5 @@ if($cuenta_pagos > 0)
 
 
 
-ob_clean();
+//ob_clean();
 $pdf->Output("reporte_corte_caja.pdf","I");

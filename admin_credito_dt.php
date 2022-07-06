@@ -43,14 +43,18 @@ $filename=get_name_script($uri);
 $links=permission_usr($id_user, $filename);
 
 $id_sucursal=$_SESSION['id_sucursal'];
-$joinQuery ="  FROM credito LEFT JOIN cliente ON cliente.id_cliente=credito.id_cliente";
+$joinQuery ="  FROM credito
+LEFT JOIN cliente
+ON cliente.id_cliente=credito.id_cliente
+LEFT JOIN factura
+ON factura.id_factura=credito.id_factura";
 $extraWhere = " credito.fecha BETWEEN '$fechai' AND '$fechaf' ";/*	AND credito.fecha BETWEEN '$fechai' AND '$fechaf' */
 $columns = array(
   array( 'db' => '`credito`.`id_credito`', 'dt' => 0, 'field' => 'id_credito' ),
   array( 'db' => '`credito`.`fecha`', 'dt' =>1, 'field' => 'fecha' ),
   array( 'db' => '`cliente`.`nombre`', 'dt' => 2, 'field' => 'nombre'),
   array( 'db' => '`credito`.`tipo_doc`', 'dt' =>3, 'field' => 'tipo_doc' ),
-  array( 'db' => '`credito`.`numero_doc`', 'dt' =>4, 'field' => 'numero_doc' ),
+  array( 'db' => '`factura`.`num_fact_impresa`', 'dt' =>4, 'field' => 'num_fact_impresa' ),
   array( 'db' => '`credito`.`total`', 'dt' =>5, 'field' => 'total' ),
   array( 'db' => '`credito`.`abono`', 'dt' =>6, 'field' => 'abono' ),
   array( 'db' => '`credito`.`saldo`', 'dt' =>7, 'field' => 'saldo' ),

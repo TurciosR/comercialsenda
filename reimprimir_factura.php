@@ -110,7 +110,7 @@ if($nrows_fact>0){
 		if ($tipo_impresion=='CCF'){
 				$info_facturas=print_ccf($id_factura,$tipo_impresion,$nit,$nrc,$nombreape,$direccion);
 		}
-		if ($tipo_impresion=='ENV'){
+		if ($tipo_impresion=='NE'){
 			$info_facturas=print_ccf($id_factura, $tipo_impresion, $nit, $nrc, $nombreape,"");
 		}
 		if ($tipo_impresion=='NC'){
