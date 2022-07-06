@@ -395,7 +395,7 @@ function initial()
                                                     <option value="TIK">TICKET</option>
                                                     <option value="COF">FACTURA</option>
                                                     <option value="CCF">CREDITO FISCAL</option>
-                                                    <option value="NE">NOTA DE ENVÍO</option>
+                                                    <!-- <option value="NE">NOTA DE ENVÍO</option> -->
                                                 </select>
                                             </div>
                                         </div>
