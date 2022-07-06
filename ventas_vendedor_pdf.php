@@ -99,8 +99,10 @@ while(strtotime($fk) <= strtotime($fin))
 {
 
 $fecha_actual = $fk;
-$sql="SELECT DISTINCT factura.id_empleado,usuario.usuario, empleado.nombre FROM factura JOIN usuario ON usuario.id_usuario=factura.id_empleado LEFT JOIN empleado ON empleado.id_empleado=usuario.id_empleado WHERE factura.fecha='$fecha_actual'";
-
+$sql="SELECT DISTINCT factura.id_empleado, empleado.nombre 
+FROM factura 
+JOIN empleado ON factura.id_empleado = empleado.id_empleado
+WHERE factura.fecha='$fecha_actual'";
 
 $result=_query($sql);
 $cuenta = _num_rows($result);
@@ -132,7 +134,7 @@ if($cuenta > 0)
 
     if (!array_key_exists($id_empleado,$empleados)) {
       // code...
-      $empleados[$id_empleado]['nombre']=$nombre." (".($row["usuario"]).")";
+      $empleados[$id_empleado]['nombre']= utf8_decode($nombre);
       $empleados[$id_empleado]['total']=$monto_total;
     }
     else
@@ -152,7 +154,7 @@ $fk = MD($fk);
 
 $pdf->Cell(10,5,utf8_decode("Nº"),"B",0,'L',0);
 $pdf->Cell(140,5,"Nombre","B",0,'L',0);
-$pdf->Cell(45,5,"Total vendido","B",1,'L',0);
+$pdf->Cell(45,5,"Total vendido","B",1,'R',0);
 //print_r($empleados);
 $i=1;
 foreach ($empleados as $key ) {

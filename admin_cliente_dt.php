@@ -35,12 +35,13 @@ $extraWhere = "id_sucursal='$id_sucursal'";
 $columns = array(
     array( 'db' => 'cliente.id_cliente', 'dt' => 0, 'field' => 'id_cliente' ),
     array( 'db' => 'cliente.nombre', 'dt' => 1, 'field' => 'nombre' ),
-    array( 'db' => 'cliente.nit', 'dt' => 2, 'field' => 'nit'),
-    array( 'db' => 'cliente.nrc', 'dt' => 3, 'field' => 'nrc'),
+    array( 'db' => 'cliente.dui', 'dt' => 2, 'field' => 'dui'),
+    array( 'db' => 'cliente.nit', 'dt' => 3, 'field' => 'nit'),
+    array( 'db' => 'cliente.nrc', 'dt' => 4, 'field' => 'nrc'),
 
     //array( 'db' => 'cliente.nrc', 'dt' => 4, 'field' => 'nrc'),
-		array( 'db' => ' IF(cliente.telefono1!="", IF(cliente.telefono2!="",CONCAT(cliente.telefono1," ; ",cliente.telefono2),cliente.telefono1),IF(cliente.telefono2!="",cliente.telefono2,""))', 'as' => 'telefono','dt' => 4, 'field' => 'telefono' ),
-    array( 'db' => 'cliente.id_cliente', 'dt' => 5, 'formatter' => function ($id_movimiento, $row) {
+	array( 'db' => ' IF(cliente.telefono1!="", IF(cliente.telefono2!="",CONCAT(cliente.telefono1," ; ",cliente.telefono2),cliente.telefono1),IF(cliente.telefono2!="",cliente.telefono2,""))', 'as' => 'telefono','dt' => 5, 'field' => 'telefono' ),
+    array( 'db' => 'cliente.id_cliente', 'dt' => 6, 'formatter' => function ($id_movimiento, $row) {
         $menudrop="<div class='btn-group'>
 		<a href='#' data-toggle='dropdown' class='btn btn-primary dropdown-toggle'><i class='fa fa-user icon-white'></i> Menu<span class='caret'></span></a>
 		<ul class='dropdown-menu dropdown-primary'>";

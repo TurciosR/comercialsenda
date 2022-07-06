@@ -370,6 +370,7 @@ function cargar_ref() {
     a = $('#vendedor');
     b = $('#id_cliente');
     c = $('#tipo_impresion');
+    d = $('#id_empleado');
 
 
     var n_ref = $("#n_ref").val();
@@ -395,8 +396,10 @@ function cargar_ref() {
                 c.trigger('change');
 
                 $("#inventable").html(lista);
-                //console.log(lista);
+
                 $("#id_empleado").val(datax.id_empleado);
+                d.trigger('change');
+
                 $("#vendedor").val(datax.id_empleado);
                 $("#id_factura").val(datax.id_factura);
                 $("#numero_doc").val(datax.numero_doc);
@@ -444,6 +447,9 @@ function cargar_ref() {
                 $("#text_cliente").val("");
                 $("#tipo_impresion").val("");
                 $("#tipo_impresion").trigger('change');
+
+                $("#id_empleado").val("");
+                $("#id_empleado").trigger('change');
 
                 $("#vendedor").val("");
                 $("#caja_detalles").html("");
@@ -1039,7 +1045,6 @@ function guardar_preventa() {
     var i = 0;
     var StringDatos = "";
     var id = '1';
-    var id_empleado = 0;
     var id_cliente = $("#id_cliente option:selected").val();
     var items = $("#items").val();
     var msg = "";
@@ -1065,7 +1070,7 @@ function guardar_preventa() {
     var venta_exenta = $('#total_exenta').text(); /*total venta exenta*/
     var total = $('#totalfactura').val();
 
-    var id_vendedor = $("#vendedor option:selected").val();
+    var id_vendedor = $("#id_empleado option:selected").val();
 
     var tipo_impresion = $('#tipo_impresion').val();
 
@@ -1148,6 +1153,11 @@ function guardar_preventa() {
         sel_vendedor = 0;
     }
 
+    if (id_vendedor == "") {
+        msg = 'Seleccione un vendedor!';
+        sel_vendedor = 0;
+    }
+
     if (i == 0) {
         msg = 'Seleccione al menos un producto !';
         sel_vendedor = 0;
@@ -1195,7 +1205,6 @@ function senddata() {
     var i = 0;
     var StringDatos = "";
     var id = '1';
-    var id_empleado = 0;
     var id_cliente = $("#id_cliente").val();
     var items = $("#items").val();
     var msg = "";
@@ -1213,7 +1222,7 @@ function senddata() {
     var venta_exenta = $('#total_exenta').text(); /*total venta exenta*/
     var total = $('#totalfactura').val();
     var tipo_pago = $('#con_pago').val();
-    var id_vendedor = $("#vendedor").val();
+    var id_vendedor = $("#id_empleado option:selected").val();
     var id_apertura = $('#id_apertura').val();
     var turno = $('#turno').val();
     var caja = $('#caja').val();
@@ -1305,6 +1314,11 @@ function senddata() {
 
     if (id_cliente == "") {
         msg = 'No hay un Cliente!';
+        sel_vendedor = 0;
+    }
+
+    if (id_vendedor == "") {
+        msg = 'Seleccione un vendedor!';
         sel_vendedor = 0;
     }
 

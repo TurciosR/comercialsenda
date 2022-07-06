@@ -1,6 +1,6 @@
 <?php
 $username = "root";
-$password = "admin$";
+$password = "1234";
 
 /*
 //============================

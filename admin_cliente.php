@@ -56,7 +56,8 @@ $links=permission_usr($id_user,$filename);
 								<thead>
 									<tr>
 										<th class="col-lg-1">Id</th>
-										<th class="col-lg-4">Nombre</th>
+										<th class="col-lg-3">Nombre</th>
+										<th class="col-lg-2">DUI</th>
 										<th class="col-lg-2">NIT</th>
 										<th class="col-lg-2">NRC</th>
 										<th class="col-lg-2">Telefonos</th>
